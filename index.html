@@ -1,92 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>AgriTrio Mobile Dashboard</title>
+<title>AgriTrio – AI Agriculture Assistant</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-  :root {
-    --primary:#2563eb;
-    --primary-dark:#1d4ed8;
-    --bg:#f1f5f9;
-    --text:#1e293b;
-    --card:#fff;
-    --card-hover:#f3f4f6;
-  }
-  [data-theme="dark"]{
-    --bg:#1e293b;
-    --text:#f1f5f9;
-    --card:#334155;
-    --card-hover:#475569;
-  }
-  body { font-family: 'Inter', sans-serif; margin:0; background:var(--bg); color:var(--text); transition: all 0.3s; }
-  header { background: linear-gradient(90deg,var(--primary),var(--primary-dark)); color:white; padding:15px 20px; font-size:1.5em; }
-  .container { display:flex; flex-direction:column; min-height:100vh; }
-  nav { display:flex; overflow-x:auto; background:var(--card); }
-  nav button { flex:1; padding:12px; border:none; background:transparent; cursor:pointer; color:var(--text); font-weight:500; transition:0.2s; border-bottom:2px solid transparent; }
-  nav button.active { border-bottom:2px solid var(--primary); }
-  main { flex:1; padding:15px; }
-  .card { background:var(--card); border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); padding:15px; margin-bottom:15px; transition: all 0.3s; }
-  .card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.15);}
-  .btn { padding:10px 15px; border-radius:6px; border:none; cursor:pointer; margin:5px 0; transition:0.2s; width:100%; }
-  .btn-primary { background:var(--primary); color:white; }
-  .btn-primary:hover { background:var(--primary-dark); }
-  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:0.9em; }
-  th,td { border:1px solid #e2e8f0; padding:8px; text-align:center; }
-  th { background:#f9fafb; }
-  select,input,textarea { width:100%; padding:8px; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
-  .collapsible { background:var(--primary); color:white; cursor:pointer; padding:10px; width:100%; border:none; text-align:left; outline:none; font-size:1em; border-radius:6px; margin-bottom:5px; }
-  .activeCollapsible, .collapsible:hover { background:var(--primary-dark); }
-  .content { padding:0 15px; display:none; overflow:hidden; background-color:var(--card-hover); border-radius:6px; margin-bottom:10px; }
-  .ai-box { border:1px solid #ccc; border-radius:6px; padding:5px; height:200px; overflow-y:auto; margin-bottom:5px; background:var(--card-hover); }
+body {font-family:'Inter',sans-serif;margin:0;background:#f1f5f9;color:#1e293b;transition:all 0.3s;}
+body[data-theme="dark"]{background:#0f172a;color:#f1f5f9;}
+header{background:linear-gradient(90deg,#2563eb,#1d4ed8);color:white;padding:15px 20px;font-size:1.5em;position:sticky;top:0;z-index:100;}
+.container{display:flex;min-height:100vh;transition:all 0.3s;}
+nav{width:260px;background:#1e293b;padding:20px;color:white;transition:all 0.3s;}
+nav button{display:block;width:100%;margin-bottom:10px;padding:12px;background:transparent;border:none;cursor:pointer;border-radius:6px;text-align:left;color:white;font-weight:500;transition:all 0.2s;}
+nav button:hover{background:#334155;}
+nav button.active{background:#2563eb;}
+main{flex:1;padding:20px;transition:all 0.3s;overflow-y:auto;}
+.card{background:#fff;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1);padding:20px;margin-bottom:20px;transition:all 0.3s;}
+body[data-theme="dark"] .card{background:#1e293b;color:#f1f5f9;}
+.card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+.btn{padding:10px 15px;border-radius:6px;border:none;cursor:pointer;margin:5px 0;transition:0.2s;}
+.btn-primary{background:#2563eb;color:white;}
+.btn-primary:hover{background:#1d4ed8;}
+table{width:100%;border-collapse:collapse;margin-top:15px;font-size:0.95em;}
+th,td{border:1px solid #e2e8f0;padding:10px;text-align:center;}
+th{background:#f9fafb;cursor:pointer;}
+th:hover{background:#e2e8f0;}
+select,input{padding:8px;margin:5px;border-radius:6px;border:1px solid #ccc;}
+ul{list-style-type:disc;padding-left:20px;}
+.collapsible{background:#2563eb;color:white;cursor:pointer;padding:10px;width:100%;border:none;text-align:left;outline:none;font-size:1em;border-radius:6px;margin-bottom:5px;}
+.activeCollapsible,.collapsible:hover{background:#1d4ed8;}
+.content{padding:0 15px;display:none;overflow:hidden;background-color:#f9fafb;border-radius:6px;margin-bottom:10px;}
+body[data-theme="dark"] .content{background:#0f172a;color:#f1f5f9;}
+#chatBox{height:200px;overflow-y:auto;border:1px solid #ccc;padding:10px;border-radius:6px;background:#f9fafb;}
+body[data-theme="dark"] #chatBox{background:#1e293b;}
+.ai-msg-content{background:#e2e8f0;padding:5px 10px;border-radius:6px;margin:5px 0;}
+body[data-theme="dark"] .ai-msg-content{background:#334155;}
+.user-msg{background:#2563eb;color:white;padding:5px 10px;border-radius:6px;margin:5px 0;text-align:right;}
 </style>
 </head>
-<body>
+<body data-theme="light">
 <header>🌱 AgriTrio – AI Agriculture Assistant</header>
-
-<!-- Navigation -->
+<div class="container">
 <nav>
   <button onclick="showSection('overview')" class="active">🏠 Overview</button>
-  <button onclick="showSection('climate')">🌤 Climate</button>
-  <button onclick="showSection('market')">📊 Market</button>
-  <button onclick="showSection('education')">📚 Education</button>
-  <button onclick="showSection('aiSection')">🤖 AI</button>
+  <button onclick="showSection('climate')">🌤 Climate Report</button>
+  <button onclick="showSection('market')">📊 Market Prices</button>
+  <button onclick="showSection('education')">📚 Agri Education</button>
+  <button onclick="showSection('chat')">🤖 AI Assistant</button>
   <button onclick="showSection('settings')">⚙️ Settings</button>
 </nav>
-
 <main>
   <!-- Overview -->
   <section id="overview" class="section">
-    <div class="card">
-      <h2>Dashboard Overview</h2>
-      <p>AgriTrio helps farmers with <b>real-time climate reports</b>, <b>dynamic crop prices</b>, and <b>AI-assisted learning</b> about agriculture practices.</p>
-    </div>
-    <div class="card">
-      <canvas id="trendChart" height="120"></canvas>
-    </div>
+    <div class="card"><h2>Dashboard Overview</h2>
+    <p>AgriTrio helps farmers with <b>real-time climate reports</b>, <b>dynamic crop prices</b>, and <b>in-depth learning</b> about agriculture practices.</p></div>
+    <div class="card"><canvas id="trendChart" height="120"></canvas></div>
   </section>
 
   <!-- Climate -->
   <section id="climate" class="section" style="display:none;">
-    <div class="card">
-      <h2>Climate Report (Live)</h2>
-      <p id="weatherData">Loading weather...</p>
-    </div>
+    <div class="card"><h2>Climate Report (Live)</h2><p id="weatherData">Loading weather...</p></div>
   </section>
 
   <!-- Market -->
   <section id="market" class="section" style="display:none;">
     <div class="card">
-      <h2>Market Prices (Agmarknet Live)</h2>
-      <select id="commoditySelect"></select>
-      <select id="stateSelect"></select>
-      <input type="text" id="marketInput" placeholder="Market name"/>
+      <h2>Market Prices</h2>
+      <label>Commodity:</label><select id="commoditySelect"></select>
+      <label>State:</label><select id="stateSelect"></select>
+      <label>Market:</label><input type="text" id="marketInput" placeholder="Enter market name"/>
       <button class="btn btn-primary" onclick="loadMarketLive()">Fetch Prices</button>
-      <table id="priceTable">
-        <tr><th>Commodity</th><th>Market</th><th>Min</th><th>Max</th><th>Modal</th><th>Date</th></tr>
-      </table>
+      <table id="priceTable"><tr><th>Commodity</th><th>Market</th><th>Min</th><th>Max</th><th>Modal</th><th>Date</th></tr></table>
     </div>
   </section>
 
@@ -94,27 +79,25 @@
   <section id="education" class="section" style="display:none;">
     <div class="card">
       <h2>📚 Agriculture Education Hub</h2>
-      <button class="collapsible">1️⃣ Land & Soil</button>
-      <div class="content">
-        <ul><li>Soil Types: Clay, Loam, Sandy, Alluvial, Black Soil.</li><li>Soil Testing: pH, nutrients.</li></ul>
-      </div>
-      <button class="collapsible">2️⃣ Irrigation & Water</button>
-      <div class="content">
-        <ul><li>Drip, Sprinkler, Flood irrigation.</li><li>Rainwater harvesting & water conservation.</li></ul>
-      </div>
-      <button class="collapsible">3️⃣ Farming Methods</button>
-      <div class="content"><ul><li>Organic, Hybrid, Precision, Hydroponics, Aqua Farming</li></ul></div>
-      <button class="collapsible">4️⃣ Crop Management</button>
-      <div class="content"><ul><li>Crop rotation & mixed cropping.</li><li>IPM & NPK balance.</li></ul></div>
+      <button class="collapsible">1️⃣ Land & Soil</button><div class="content">
+        <ul><li>Soil Types: Clay, Loam, Sandy, Alluvial, Black Soil.</li><li>Soil Testing: pH, fertility, nutrient analysis.</li></ul></div>
+      <button class="collapsible">2️⃣ Irrigation & Water</button><div class="content">
+        <ul><li>Drip, Sprinkler, Flood irrigation.</li><li>Rainwater harvesting & conservation.</li></ul></div>
+      <button class="collapsible">3️⃣ Crop Management</button><div class="content">
+        <ul><li>Crop rotation & mixed cropping.</li><li>Integrated Pest Management.</li><li>Fertilizer NPK balance.</li></ul></div>
+      <button class="collapsible">4️⃣ Agri-Tech & Robotics</button><div class="content">
+        <ul><li>Drones, IoT, AI disease detection, robotics for harvesting.</li></ul></div>
+      <button class="collapsible">5️⃣ Government & Market</button><div class="content">
+        <ul><li>PM-Kisan, Crop Insurance, e-NAM, FPOs, cooperatives.</li></ul></div>
     </div>
   </section>
 
-  <!-- AI Assistant -->
-  <section id="aiSection" class="section" style="display:none;">
+  <!-- AI Chat -->
+  <section id="chat" class="section" style="display:none;">
     <div class="card">
-      <h2>🤖 AI Assistant</h2>
-      <div class="ai-box" id="chatBox"></div>
-      <textarea id="aiInput" rows="2" placeholder="Ask about crops, diseases, fertilizers..."></textarea>
+      <h2>🤖 AI Agriculture Assistant</h2>
+      <div id="chatBox"></div>
+      <input type="text" id="aiInput" placeholder="Ask AI about crops, climate, techniques..." style="width:80%;"/>
       <button class="btn btn-primary" onclick="queryAI()">Send</button>
     </div>
   </section>
@@ -123,19 +106,16 @@
   <section id="settings" class="section" style="display:none;">
     <div class="card">
       <h2>⚙️ Settings</h2>
-      <button class="btn" onclick="toggleTheme()">Toggle Dark/Light Theme</button>
-      <div style="margin-top:10px;">
-        <h3>About App</h3>
-        <p>AgriTrio v1.0 – AI-powered mobile dashboard for agriculture monitoring and education.</p>
-        <h3>Contact Us</h3>
-        <p>Email: support@agritrio.com | Phone: +91-9000000000</p>
-      </div>
+      <p><b>Theme:</b> <button class="btn btn-primary" onclick="toggleTheme()">Toggle Light/Dark</button></p>
+      <p><b>About App:</b> AgriTrio helps farmers access weather, markets, AI guidance, and education anywhere, offline or online.</p>
+      <p><b>Contact Us:</b> Email: support@agritrio.com | Phone: +91 9876543210</p>
     </div>
   </section>
 </main>
+</div>
 
 <script>
-// Navigation
+// --- Navigation ---
 function showSection(id){
   document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s=>s.style.display='none');
@@ -143,9 +123,11 @@ function showSection(id){
   event.target.classList.add('active');
 }
 
-// Theme Toggle
+// --- Theme ---
 function toggleTheme(){
-  document.body.dataset.theme = document.body.dataset.theme === "dark" ? "light" : "dark";
+  const newTheme = document.body.dataset.theme === 'light' ? 'dark' : 'light';
+  document.body.dataset.theme = newTheme;
+  localStorage.setItem('theme', newTheme);
 }
 
 // --- Weather ---
@@ -153,18 +135,16 @@ async function loadWeather(){
   try{
     let res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=12.3&longitude=76.6&current_weather=true");
     let d = await res.json();
-    let w = d.current_weather;
-    const weatherStr = `🌡 ${w.temperature}°C 💨 ${w.windspeed} km/h`;
-    document.getElementById("weatherData").innerText = weatherStr;
-    localStorage.setItem("weatherCache", JSON.stringify({data: weatherStr, ts: Date.now()}));
-    notifyUser("Weather Update", weatherStr);
+    const w = d.current_weather;
+    document.getElementById("weatherData").innerText=`🌡 ${w.temperature}°C 💨 ${w.windspeed} km/h`;
+    localStorage.setItem("weatherCache", JSON.stringify({data:document.getElementById("weatherData").innerText, ts:Date.now()}));
   }catch(e){
     const cache = JSON.parse(localStorage.getItem("weatherCache"));
-    document.getElementById("weatherData").innerText = cache?.data || "Weather unavailable offline";
+    document.getElementById("weatherData").innerText = cache?.data || "Weather unavailable";
   }
 }
 
-// --- Commodities & States ---
+// --- Populate dropdowns ---
 const commodities=["Wheat","Rice","Maize","Barley","Millets","Mustard","Soybean","Cotton","Sugarcane","Groundnut","Onion","Potato","Tomato","Banana","Apple","Mango","Turmeric","Chilli","Lentil","Chickpea","Coconut","Tea","Coffee"];
 const states=["Karnataka","Maharashtra","Punjab","Haryana","Uttar Pradesh","Madhya Pradesh","Tamil Nadu","Andhra Pradesh","Gujarat","West Bengal","Bihar"];
 function populateDropdowns(){
@@ -174,7 +154,7 @@ function populateDropdowns(){
   states.forEach(s=>{let o=document.createElement("option"); o.value=s;o.text=s;sSelect.appendChild(o);});
 }
 
-// --- Agmarknet Fetch ---
+// --- Market Fetch ---
 async function fetchAgmarknetPrice(commodity,state,market){
   try{
     const apiUrl=`https://agmarknetapi.herokuapp.com/request?commodity=${encodeURIComponent(commodity)}&state=${encodeURIComponent(state)}&market=${encodeURIComponent(market)}`;
@@ -182,8 +162,7 @@ async function fetchAgmarknetPrice(commodity,state,market){
     if(!resp.ok) throw new Error("Bad response");
     return await resp.json();
   }catch(err){
-    const fallback = [{Commodity:commodity,City:market,"Min Prize":2000,"Max Prize":2400,"Model Prize":2200,Date:new Date().toLocaleDateString()}];
-    return fallback;
+    return [{Commodity:commodity,City:market,"Min Prize":2000,"Max Prize":2400,"Model Prize":2200,Date:new Date().toLocaleDateString()}];
   }
 }
 
@@ -193,21 +172,8 @@ async function loadMarketLive(){
   const m=document.getElementById("marketInput").value || "Default Market";
   const table=document.getElementById("priceTable");
   table.querySelectorAll("tr:not(:first-child)").forEach(r=>r.remove());
-
-  try{
-    const data = await fetchAgmarknetPrice(c,s,m);
-    localStorage.setItem("marketCache", JSON.stringify({data, ts:Date.now()}));
-    populateMarketTable(data);
-    notifyUser("Market Update", `${c} modal price: ${data[0]["Model Prize"]}`);
-  }catch(e){
-    const cache = JSON.parse(localStorage.getItem("marketCache"));
-    if(cache?.data) populateMarketTable(cache.data);
-    else alert("No market data available offline");
-  }
-}
-
-function populateMarketTable(data){
-  const table=document.getElementById("priceTable");
+  const data = await fetchAgmarknetPrice(c,s,m);
+  localStorage.setItem("marketCache", JSON.stringify(data));
   data.forEach(rec=>{
     const r=table.insertRow();
     r.insertCell(0).innerText=rec["Commodity"];
@@ -229,69 +195,72 @@ function renderChart(){
       {label:"Rice",data:[3000,3100,3050,3150,3200],borderColor:"#16a34a",fill:false,tension:0.3},
       {label:"Maize",data:[1800,1850,1900,1950,2000],borderColor:"#f59e0b",fill:false,tension:0.3}
     ]
-  }, options:{plugins:{tooltip:{mode:'index',intersect:false}}}});
+  },options:{plugins:{tooltip:{mode:'index',intersect:false}}}});
 }
 
-// --- Collapsible Education ---
+// --- Collapsible ---
 document.addEventListener("DOMContentLoaded", function(){
   const coll=document.getElementsByClassName("collapsible");
   for(let i=0;i<coll.length;i++){
     coll[i].addEventListener("click",function(){
       this.classList.toggle("activeCollapsible");
       const content=this.nextElementSibling;
-      content.style.display = content.style.display==="block"?"none":"block";
+      content.style.maxHeight = content.style.maxHeight ? null : content.scrollHeight + "px";
     });
   }
 });
 
-// --- Push Notifications ---
-if("Notification" in window){Notification.requestPermission();}
-function notifyUser(title, body){if(Notification.permission==="granted"){new Notification(title,{body});}}
-
 // --- AI Chat ---
-let chatHistory = [];
+let chatHistory = JSON.parse(localStorage.getItem("aiChat")) || [];
+function loadChatHistory(){ renderChat(); }
 async function queryAI(){
   const input=document.getElementById("aiInput").value.trim();
   if(!input) return;
-  const chatBox=document.getElementById("chatBox");
-  chatHistory.push({role:"user", text: input});
-  renderChat();
-  document.getElementById("aiInput").value="";
-
+  chatHistory.push({role:"user", text: input}); renderChat(); document.getElementById("aiInput").value="";
   try{
-    const response = await fetch("https://api-inference.huggingface.co/models/gpt2", {
+    const response = await fetch("https://api-inference.huggingface.co/models/gpt2",{
       method:"POST",
-      headers:{ "Authorization":"Bearer hf_your_open_source_token_here","Content-Type":"application/json"},
+      headers:{ "Authorization":"Bearer hf_your_token_here","Content-Type":"application/json"},
       body: JSON.stringify({inputs: input})
     });
     const data = await response.json();
     const aiText = data[0]?.generated_text || "AI did not respond.";
     chatHistory.push({role:"ai", text: aiText});
-    renderChat();
-  }catch(e){chatHistory.push({role:"ai", text:"AI API unavailable."}); renderChat();}
+    renderChat(); localStorage.setItem("aiChat", JSON.stringify(chatHistory));
+  }catch(e){chatHistory.push({role:"ai",text:"AI offline. Please connect to internet."}); renderChat();}
 }
-
 function renderChat(){
-  const chatBox=document.getElementById("chatBox");
-  chatBox.innerHTML="";
-  chatHistory.forEach(msg=>{
+  const chatBox=document.getElementById("chatBox"); chatBox.innerHTML="";
+  chatHistory.forEach(m=>{
     const div=document.createElement("div");
-    div.style.padding="5px";
-    div.style.margin="3px 0";
-    div.style.borderRadius="5px";
-    if(msg.role==="user"){div.style.background="#2563eb"; div.style.color="white"; div.style.textAlign="right";}
-    else{div.style.background="#e2e8f0"; div.style.color="#1e293b"; div.style.textAlign="left";}
-    div.innerText = msg.text;
-    chatBox.appendChild(div);
+    div.className = m.role==="user"?"user-msg":"ai-msg-content";
+    div.innerText = m.text; chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
   });
-  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 // --- Init ---
 window.onload = ()=>{
+  const savedTheme = localStorage.getItem("theme") || "light";
+  document.body.dataset.theme = savedTheme;
   populateDropdowns();
   loadWeather();
   renderChart();
+  loadChatHistory();
+}
+
+// --- Inline Service Worker ---
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE_NAME = "agritrio-cache-v1";
+    const urlsToCache = ["/","https://cdn.jsdelivr.net/npm/chart.js","https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"];
+    self.addEventListener("install", event => { event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))); });
+    self.addEventListener("fetch", event => { event.respondWith(caches.match(event.request).then(resp => resp || fetch(event.request))); });
+  `;
+  const blob = new Blob([swCode], { type: "application/javascript" });
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).then(()=>console.log("Inline SW registered"))
+  .catch(err=>console.error("SW registration failed:", err));
 }
 </script>
 </body>
