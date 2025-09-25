@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AgriTrio Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { font-family: 'Inter', sans-serif; margin: 0; background: #f1f5f9; color: #1e293b; }
+  header { background: linear-gradient(90deg,#2563eb,#1d4ed8); color: white; padding: 15px 20px; font-size: 1.5em; }
+  .container { display: flex; min-height: 100vh; transition: all 0.3s; }
+  nav { width: 260px; background: #1e293b; padding: 20px; color: white; transition: all 0.3s; }
+  nav button { display: block; width: 100%; margin-bottom: 10px; padding: 12px; background: transparent; border: none; cursor: pointer; border-radius: 6px; text-align: left; color: white; font-weight: 500; transition: all 0.2s; }
+  nav button:hover { background: #334155; }
+  nav button.active { background: #2563eb; }
+  main { flex: 1; padding: 25px; transition: all 0.3s; }
+  .card { background: #fff; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; transition: all 0.3s; }
+  .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .btn { padding: 10px 15px; border-radius: 6px; border: none; cursor: pointer; margin: 5px 0; transition: 0.2s; }
+  .btn-primary { background: #2563eb; color: white; }
+  .btn-primary:hover { background: #1d4ed8; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95em; }
+  th, td { border: 1px solid #e2e8f0; padding: 10px; text-align: center; }
+  th { background: #f9fafb; cursor: pointer; }
+  th:hover { background: #e2e8f0; }
+  select, input { padding: 8px; margin: 5px; border-radius: 6px; border: 1px solid #ccc; }
+  ul { list-style-type: disc; padding-left: 20px; }
+  .collapsible { background: #2563eb; color: white; cursor: pointer; padding: 10px; width: 100%; border: none; text-align: left; outline: none; font-size: 1em; border-radius: 6px; margin-bottom: 5px; }
+  .activeCollapsible, .collapsible:hover { background: #1d4ed8; }
+  .content { padding: 0 15px; display: none; overflow: hidden; background-color: #f9fafb; border-radius: 6px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<header>🌱 AgriTrio – AI-based Agriculture Assistant</header>
+<div class="container">
+  <nav>
+    <button onclick="showSection('overview')" class="active">🏠 Overview</button>
+    <button onclick="showSection('climate')">🌤 Climate Report</button>
+    <button onclick="showSection('market')">📊 Market Prices</button>
+    <button onclick="showSection('education')">📚 Agri Education</button>
+    <button onclick="showSection('reports')">📑 Reports</button>
+  </nav>
+  <main>
+    <!-- Overview -->
+    <section id="overview" class="section">
+      <div class="card">
+        <h2>Dashboard Overview</h2>
+        <p>AgriTrio helps farmers with <b>real-time climate reports</b>, <b>dynamic crop prices</b>, and <b>in-depth learning</b> about agriculture practices.</p>
+      </div>
+      <div class="card">
+        <canvas id="trendChart" height="120"></canvas>
+      </div>
+    </section>
+
+    <!-- Climate -->
+    <section id="climate" class="section" style="display:none;">
+      <div class="card">
+        <h2>Climate Report (Live)</h2>
+        <p id="weatherData">Loading weather...</p>
+      </div>
+    </section>
+
+    <!-- Market Prices -->
+    <section id="market" class="section" style="display:none;">
+      <div class="card">
+        <h2>Market Prices (Agmarknet Live)</h2>
+        <label>Commodity:</label>
+        <select id="commoditySelect"></select>
+        <label>State:</label>
+        <select id="stateSelect"></select>
+        <label>Market:</label>
+        <input type="text" id="marketInput" placeholder="Enter market name"/>
+        <button class="btn btn-primary" onclick="loadMarketLive()">Fetch Prices</button>
+        <table id="priceTable">
+          <tr><th>Commodity</th><th>Market</th><th>Min</th><th>Max</th><th>Modal</th><th>Date</th></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- Agriculture Education -->
+    <section id="education" class="section" style="display:none;">
+      <div class="card">
+        <h2>📚 Agriculture Education Hub</h2>
+        <button class="collapsible">1️⃣ Land & Soil</button>
+        <div class="content">
+          <ul>
+            <li>Soil Types: Clay, Loam, Sandy, Alluvial, Black Soil.</li>
+            <li>Soil Testing: pH, fertility, and nutrient analysis.</li>
+          </ul>
+        </div>
+        <button class="collapsible">2️⃣ Irrigation & Water Management</button>
+        <div class="content">
+          <ul>
+            <li>Methods: Drip, Sprinkler, Flood irrigation.</li>
+            <li>Rainwater harvesting & water conservation practices.</li>
+          </ul>
+        </div>
+        <button class="collapsible">3️⃣ Farming Methods</button>
+        <div class="content">
+          <ul>
+            <li>Organic, Hybrid, Precision, Hydroponics, Aqua Farming</li>
+          </ul>
+        </div>
+        <button class="collapsible">4️⃣ Crop Management</button>
+        <div class="content">
+          <ul>
+            <li>Crop rotation & mixed cropping.</li>
+            <li>Integrated Pest Management (IPM).</li>
+            <li>Fertilizer management: NPK balance.</li>
+          </ul>
+        </div>
+        <button class="collapsible">5️⃣ Agri-Tech</button>
+        <div class="content">
+          <ul>
+            <li>Drones, Robotics & AI-based disease detection</li>
+          </ul>
+        </div>
+        <button class="collapsible">6️⃣ Government Support</button>
+        <div class="content">
+          <ul>
+            <li>PM-Kisan, Crop Insurance (PMFBY), Subsidies for seeds & pumps</li>
+          </ul>
+        </div>
+        <button class="collapsible">7️⃣ Farm Business & Marketing</button>
+        <div class="content">
+          <ul>
+            <li>e-NAM, Direct-to-consumer, Cooperatives & FPOs</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reports -->
+    <section id="reports" class="section" style="display:none;">
+      <div class="card">
+        <h2>Reports</h2>
+        <button class="btn btn-primary" onclick="downloadReport()">Download Report (PDF)</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+// --- Navigation ---
+function showSection(id){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+  document.getElementById(id).style.display='block';
+  event.target.classList.add('active');
+}
+
+// --- Weather API ---
+async function loadWeather(){
+  try{
+    let res=await fetch("https://api.open-meteo.com/v1/forecast?latitude=12.3&longitude=76.6&current_weather=true");
+    let d=await res.json();
+    let w=d.current_weather;
+    document.getElementById("weatherData").innerHTML=`🌡 ${w.temperature}°C, 💨 ${w.windspeed} km/h, Code:${w.weathercode}`;
+  }catch(e){document.getElementById("weatherData").innerText="Weather data unavailable";}
+}
+
+// --- Populate Commodity & State Dropdowns ---
+const commodities=["Wheat","Rice","Maize","Barley","Millets","Mustard","Soybean","Cotton","Sugarcane","Groundnut","Onion","Potato","Tomato","Banana","Apple","Mango","Turmeric","Chilli","Lentil","Chickpea","Coconut","Tea","Coffee"];
+const states=["Karnataka","Maharashtra","Punjab","Haryana","Uttar Pradesh","Madhya Pradesh","Tamil Nadu","Andhra Pradesh","Gujarat","West Bengal","Bihar"];
+function populateDropdowns(){
+  const cSelect=document.getElementById("commoditySelect");
+  const sSelect=document.getElementById("stateSelect");
+  commodities.forEach(c=>{let o=document.createElement("option");o.value=c;o.text=c;cSelect.appendChild(o);});
+  states.forEach(s=>{let o=document.createElement("option");o.value=s;o.text=s;sSelect.appendChild(o);});
+}
+
+// --- Agmarknet Fetch ---
+async function fetchAgmarknetPrice(commodity,state,market){
+  try{
+    const apiUrl=`https://agmarknetapi.herokuapp.com/request?commodity=${encodeURIComponent(commodity)}&state=${encodeURIComponent(state)}&market=${encodeURIComponent(market)}`;
+    const resp=await fetch(apiUrl);
+    if(!resp.ok) throw new Error("Bad response");
+    return await resp.json();
+  }catch(err){
+    console.warn("Agmarknet fetch failed, fallback:",err);
+    return [{Commodity:commodity,City:market,"Min Prize":2000,"Max Prize":2400,"Model Prize":2200,Date:new Date().toLocaleDateString()}];
+  }
+}
+
+async function loadMarketLive(){
+  const c=document.getElementById("commoditySelect").value;
+  const s=document.getElementById("stateSelect").value;
+  const m=document.getElementById("marketInput").value || "Default Market";
+
+  const table=document.getElementById("priceTable");
+  table.querySelectorAll("tr:not(:first-child)").forEach(r=>r.remove());
+
+  const data=await fetchAgmarknetPrice(c,s,m);
+  data.forEach(rec=>{
+    const r=table.insertRow();
+    r.insertCell(0).innerText=rec["Commodity"]||c;
+    r.insertCell(1).innerText=rec["City"]||m;
+    r.insertCell(2).innerText=rec["Min Prize"]||"-";
+    r.insertCell(3).innerText=rec["Max Prize"]||"-";
+    r.insertCell(4).innerText=rec["Model Prize"]||"-";
+    r.insertCell(5).innerText=rec["Date"]||"-";
+  });
+}
+
+// --- Chart.js Price Trend ---
+function renderChart(){
+  const ctx=document.getElementById("trendChart");
+  new Chart(ctx,{type:"line",data:{
+    labels:["Jan","Feb","Mar","Apr","May"],
+    datasets:[
+      {label:"Wheat",data:[2200,2250,2300,2400,2450],borderColor:"#2563eb",fill:false,tension:0.3},
+      {label:"Rice",data:[3000,3100,3050,3150,3200],borderColor:"#16a34a",fill:false,tension:0.3},
+      {label:"Maize",data:[1800,1850,1900,1950,2000],borderColor:"#f59e0b",fill:false,tension:0.3}
+    ]
+  }, options:{plugins:{tooltip:{mode:'index',intersect:false}}}});
+}
+
+// --- Collapsible Education ---
+document.addEventListener("DOMContentLoaded", function(){
+  const coll=document.getElementsByClassName("collapsible");
+  for(let i=0;i<coll.length;i++){
+    coll[i].addEventListener("click",function(){
+      this.classList.toggle("activeCollapsible");
+      const content=this.nextElementSibling;
+      if(content.style.display==="block"){content.style.display="none";} else{content.style.display="block";}
+    });
+  }
+});
+
+// --- Report ---
+function downloadReport(){
+  const text="AgriTrio Report\nDate:"+new Date().toLocaleString();
+  const blob=new Blob([text],{type:"text/plain"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="AgriTrio_Report.txt";a.click();
+  URL.revokeObjectURL(url);
+}
+
+// --- Init ---
+window.onload=()=>{populateDropdowns();loadWeather();renderChart();}
+</script>
+</body>
+</html>
